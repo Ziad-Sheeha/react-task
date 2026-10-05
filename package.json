@@ -10,8 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "primeicons": "^8.0.2",
-    "primereact": "^11.2.0",
+    "primeflex": "^4.0.0",
+    "primeicons": "^7.0.0",
+    "primereact": "^10.9.8",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
