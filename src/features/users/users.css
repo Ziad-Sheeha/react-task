@@ -1,0 +1,41 @@
+.action-disabled {
+  display: inline-flex;
+}
+.action-disabled .p-button:disabled {
+  pointer-events: none;
+}
+
+.user-details__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+.user-details__row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+.user-details__row:last-child {
+  border-bottom: 0;
+}
+.user-details__row > i {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--highlight-bg);
+  color: var(--highlight-text-color);
+}
+.user-details__label {
+  font-size: 0.8rem;
+  color: var(--text-color-secondary);
+}
+.user-details__value {
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}

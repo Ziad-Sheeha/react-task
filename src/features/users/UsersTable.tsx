@@ -7,8 +7,12 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { useDebounce } from "@/hooks/useDebounce";
 import type { UserRow } from "./types";
+import { Tooltip } from "primereact/tooltip";
+import { UserRowActions } from "./UserRowActions";
+import { UserDetailsDialog } from "./UserDetailsDialog";
+import "./users.css";
 
-const PAGE_SIZES = [10, 25, 50, 100];
+const PAGE_SIZES = [5, 10, 25, 50, 100];
 const GLOBAL_FIELDS = ["name", "username", "email", "phone", "website"];
 
 const textFilter = () => ({
@@ -38,6 +42,15 @@ function UsersTableBase({ users, loading }: Props) {
   const [selected, setSelected] = useState<UserRow[]>([]);
 
   const debouncedSearch = useDebounce(search, 300);
+
+  const [viewId, setViewId] = useState<number | null>(null);
+
+  const viewedUser = useMemo(() => users.find((u) => u.id === viewId) ?? null, [users, viewId]);
+
+  const handleView = useCallback((id: number) => setViewId(id), []);
+  const handleCloseView = useCallback(() => setViewId(null), []);
+
+  const actionsBody = useCallback((row: UserRow) => <UserRowActions id={row.id} onView={handleView} />, [handleView]);
 
   const mergedFilters = useMemo<DataTableFilterMeta>(
     () => ({
@@ -86,59 +99,71 @@ function UsersTableBase({ users, loading }: Props) {
   );
 
   return (
-    <DataTable
-      value={users}
-      dataKey="id"
-      loading={loading}
-      header={header}
-      emptyMessage="No users match your search."
-      paginator
-      rows={PAGE_SIZES[0]}
-      rowsPerPageOptions={PAGE_SIZES}
-      filters={mergedFilters}
-      onFilter={(e) => setFilters(e.filters)}
-      globalFilterFields={GLOBAL_FIELDS}
-      selectionMode="checkbox"
-      selection={selected}
-      onSelectionChange={(e) => setSelected(e.value as UserRow[])}
-      scrollable
-    >
-      <Column selectionMode="multiple" headerStyle={{ width: "3rem" }} />
-      <Column field="id" header="ID" style={{ minWidth: "5rem" }} />
-      <Column field="name" header="Name" filter filterPlaceholder="Search by name" style={{ minWidth: "12rem" }} />
-      <Column
-        field="username"
-        header="Username"
-        filter
-        filterPlaceholder="Search by username"
-        style={{ minWidth: "11rem" }}
-      />
-      <Column field="email" header="Email" filter filterPlaceholder="Search by email" style={{ minWidth: "14rem" }} />
-      <Column field="phone" header="Phone" style={{ minWidth: "12rem" }} />
-      <Column
-        field="website"
-        header="Website"
-        filter
-        filterPlaceholder="Search by website"
-        style={{ minWidth: "11rem" }}
-      />
-      <Column
-        field="company"
-        header="Company"
-        filter
-        showFilterMatchModes={false}
-        filterElement={companyFilter}
-        style={{ minWidth: "13rem" }}
-      />
-      <Column
-        field="city"
-        header="City"
-        filter
-        showFilterMatchModes={false}
-        filterElement={cityFilter}
-        style={{ minWidth: "11rem" }}
-      />
-    </DataTable>
+    <>
+      <Tooltip target=".action-disabled" content="Do not modify the API data." position="top" />
+      <DataTable
+        value={users}
+        dataKey="id"
+        loading={loading}
+        header={header}
+        emptyMessage="No users match your search."
+        paginator
+        rows={PAGE_SIZES[0]}
+        rowsPerPageOptions={PAGE_SIZES}
+        filters={mergedFilters}
+        onFilter={(e) => setFilters(e.filters)}
+        globalFilterFields={GLOBAL_FIELDS}
+        selectionMode="checkbox"
+        selection={selected}
+        onSelectionChange={(e) => setSelected(e.value as UserRow[])}
+        scrollable
+      >
+        <Column selectionMode="multiple" headerStyle={{ width: "3rem" }} />
+        <Column field="id" header="ID" style={{ minWidth: "5rem" }} />
+        <Column field="name" header="Name" filter filterPlaceholder="Search by name" style={{ minWidth: "12rem" }} />
+        <Column
+          field="username"
+          header="Username"
+          filter
+          filterPlaceholder="Search by username"
+          style={{ minWidth: "11rem" }}
+        />
+        <Column field="email" header="Email" filter filterPlaceholder="Search by email" style={{ minWidth: "14rem" }} />
+        <Column field="phone" header="Phone" style={{ minWidth: "12rem" }} />
+        <Column
+          field="website"
+          header="Website"
+          filter
+          filterPlaceholder="Search by website"
+          style={{ minWidth: "11rem" }}
+        />
+        <Column
+          field="company"
+          header="Company"
+          filter
+          showFilterMatchModes={false}
+          filterElement={companyFilter}
+          style={{ minWidth: "13rem" }}
+        />
+        <Column
+          field="city"
+          header="City"
+          filter
+          showFilterMatchModes={false}
+          filterElement={cityFilter}
+          style={{ minWidth: "11rem" }}
+        />
+        <Column
+          header="Actions"
+          body={actionsBody}
+          frozen
+          alignFrozen="right"
+          exportable={false}
+          style={{ minWidth: "9rem" }}
+        />
+      </DataTable>
+      <UserDetailsDialog user={viewedUser} onHide={handleCloseView} />
+    </>
   );
 }
 
