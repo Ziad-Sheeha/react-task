@@ -32,3 +32,18 @@
   font-weight: 500;
   overflow-wrap: anywhere;
 }
+.search-box {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.search-box > i {
+  position: absolute;
+  left: 0.85rem;
+  color: var(--text-color-secondary);
+  pointer-events: none;
+}
+.search-box > .p-inputtext {
+  padding-left: 2.5rem;
+  min-width: 16rem;
+}

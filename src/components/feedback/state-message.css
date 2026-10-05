@@ -1,0 +1,58 @@
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 4rem 1.5rem;
+}
+.state--compact {
+  padding: 2.5rem 1rem;
+}
+
+.state__icon {
+  width: 4rem;
+  height: 4rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 1.5rem;
+}
+.state--danger .state__icon {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.state--info .state__icon {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+.state--neutral .state__icon {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.state__title {
+  margin: 0.5rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+.state__desc {
+  margin: 0;
+  max-width: 26rem;
+  color: var(--text-color-secondary, #64748b);
+}
+.state__action {
+  margin-top: 1rem;
+}
+
+/* صفحة الـ 404 */
+.not-found__code {
+  display: block;
+  text-align: center;
+  margin-top: 2rem;
+  font-size: clamp(4rem, 12vw, 7rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--primary-color, #3b82f6);
+}

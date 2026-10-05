@@ -10,6 +10,7 @@ import type { UserRow } from "./types";
 import { UserRowActions } from "./UserRowActions";
 import { UserDetailsDialog } from "./UserDetailsDialog";
 import "./users.css";
+import { StateMessage } from "@/components/feedback/StateMessage";
 
 const PAGE_SIZES = [5, 10, 25, 50, 100];
 const GLOBAL_FIELDS = ["name", "username", "email", "phone", "website"];
@@ -32,10 +33,9 @@ const createFilters = (): DataTableFilterMeta => ({
 
 interface Props {
   users: UserRow[];
-  loading: boolean;
 }
 
-function UsersTableBase({ users, loading }: Props) {
+function UsersTableBase({ users }: Props) {
   const [filters, setFilters] = useState<DataTableFilterMeta>(createFilters);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<UserRow[]>([]);
@@ -86,7 +86,7 @@ function UsersTableBase({ users, loading }: Props) {
   const header = (
     <div className="flex justify-content-between align-items-center gap-3 flex-wrap">
       <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined onClick={clearAll} />
-      <span className="p-input-icon-left">
+      <span className="search-box">
         <i className="pi pi-search" />
         <InputText
           value={search}
@@ -97,14 +97,43 @@ function UsersTableBase({ users, loading }: Props) {
     </div>
   );
 
+  const hasActiveFilters = useMemo(() => {
+    if (debouncedSearch.trim()) return true;
+
+    return Object.entries(filters).some(([field, filter]) => {
+      if (field === "global") return false;
+
+      if ("constraints" in filter) {
+        return filter.constraints.some((constraint) => constraint.value !== null && constraint.value !== "");
+      }
+
+      return filter.value !== null && filter.value !== "";
+    });
+  }, [filters, debouncedSearch]);
+
+  const emptyMessage = (
+    <StateMessage
+      icon={hasActiveFilters ? "pi pi-search" : "pi pi-users"}
+      title={hasActiveFilters ? "No users found" : "No users yet"}
+      description={
+        hasActiveFilters
+          ? "We couldn't find any users matching your search or filters."
+          : "There are no users to display at the moment."
+      }
+      actionLabel={hasActiveFilters ? "Clear filters" : undefined}
+      actionIcon={hasActiveFilters ? "pi pi-filter-slash" : undefined}
+      onAction={hasActiveFilters ? clearAll : undefined}
+      compact
+    />
+  );
+
   return (
     <>
       <DataTable
         value={users}
         dataKey="id"
-        loading={loading}
         header={header}
-        emptyMessage="No users match your search."
+        emptyMessage={emptyMessage}
         paginator
         rows={PAGE_SIZES[0]}
         rowsPerPageOptions={PAGE_SIZES}

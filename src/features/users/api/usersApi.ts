@@ -1,11 +1,11 @@
-import type { ApiUser, UserRow } from '../types'
+import type { ApiUser, UserRow } from "../types";
 
-const USERS_URL = 'https://jsonplaceholder.typicode.com/users'
+const USERS_URL = "https://jsonplaceholder.typicode.com/users";
 
 export async function fetchUsers(signal?: AbortSignal): Promise<ApiUser[]> {
-  const res = await fetch(USERS_URL, { signal })
-  if (!res.ok) throw new Error(`Request failed with status ${res.status}`)
-  return res.json()
+  const res = await fetch(USERS_URL, { signal });
+  if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
+  return res.json();
 }
 
 export const toUserRow = (u: ApiUser): UserRow => ({
@@ -17,4 +17,4 @@ export const toUserRow = (u: ApiUser): UserRow => ({
   website: u.website,
   company: u.company.name,
   city: u.address.city,
-})
+});
