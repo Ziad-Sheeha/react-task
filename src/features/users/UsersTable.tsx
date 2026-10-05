@@ -1,18 +1,16 @@
 import { memo, useCallback, useMemo, useState } from "react";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
-import { DataTable, type DataTableFilterMeta } from "primereact/datatable";
+import { type DataTableFilterMeta } from "primereact/datatable";
 import { Column, type ColumnFilterElementTemplateOptions } from "primereact/column";
-import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
-import { useDebounce } from "@/hooks/useDebounce";
 import type { UserRow } from "./types";
 import { UserRowActions } from "./UserRowActions";
 import { UserDetailsDialog } from "./UserDetailsDialog";
 import "./users.css";
 import { StateMessage } from "@/components/feedback/StateMessage";
+import { Table } from "@/components/table/Table";
 
-const PAGE_SIZES = [5, 10, 25, 50, 100];
 const GLOBAL_FIELDS = ["name", "username", "email", "phone", "website"];
 
 const textFilter = () => ({
@@ -37,10 +35,7 @@ interface Props {
 
 function UsersTableBase({ users }: Props) {
   const [filters, setFilters] = useState<DataTableFilterMeta>(createFilters);
-  const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<UserRow[]>([]);
-
-  const debouncedSearch = useDebounce(search, 300);
 
   const [viewId, setViewId] = useState<number | null>(null);
 
@@ -50,14 +45,6 @@ function UsersTableBase({ users }: Props) {
   const handleCloseView = useCallback(() => setViewId(null), []);
 
   const actionsBody = useCallback((row: UserRow) => <UserRowActions id={row.id} onView={handleView} />, [handleView]);
-
-  const mergedFilters = useMemo<DataTableFilterMeta>(
-    () => ({
-      ...filters,
-      global: { value: debouncedSearch || null, matchMode: FilterMatchMode.CONTAINS },
-    }),
-    [filters, debouncedSearch],
-  );
 
   const companies = useMemo(() => [...new Set(users.map((u) => u.company))].sort(), [users]);
   const cities = useMemo(() => [...new Set(users.map((u) => u.city))].sort(), [users]);
@@ -80,7 +67,6 @@ function UsersTableBase({ users }: Props) {
 
   const clearAll = useCallback(() => {
     setFilters(createFilters());
-    setSearch("");
   }, []);
 
   const header = (
@@ -88,18 +74,11 @@ function UsersTableBase({ users }: Props) {
       <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined onClick={clearAll} />
       <span className="search-box">
         <i className="pi pi-search" />
-        <InputText
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search name, email, phone..."
-        />
       </span>
     </div>
   );
 
   const hasActiveFilters = useMemo(() => {
-    if (debouncedSearch.trim()) return true;
-
     return Object.entries(filters).some(([field, filter]) => {
       if (field === "global") return false;
 
@@ -109,7 +88,7 @@ function UsersTableBase({ users }: Props) {
 
       return filter.value !== null && filter.value !== "";
     });
-  }, [filters, debouncedSearch]);
+  }, [filters]);
 
   const emptyMessage = (
     <StateMessage
@@ -129,21 +108,16 @@ function UsersTableBase({ users }: Props) {
 
   return (
     <>
-      <DataTable
+      <Table
         value={users}
         dataKey="id"
         header={header}
         emptyMessage={emptyMessage}
-        paginator
-        rows={PAGE_SIZES[0]}
-        rowsPerPageOptions={PAGE_SIZES}
-        filters={mergedFilters}
-        onFilter={(e) => setFilters(e.filters)}
+        filters={filters}
+        onFilter={setFilters}
         globalFilterFields={GLOBAL_FIELDS}
-        selectionMode="checkbox"
         selection={selected}
-        onSelectionChange={(e) => setSelected(e.value as UserRow[])}
-        scrollable
+        onSelectionChange={(value) => setSelected(value as UserRow[])}
       >
         <Column selectionMode="multiple" headerStyle={{ width: "3rem" }} />
         <Column field="id" header="ID" style={{ minWidth: "5rem" }} />
@@ -188,7 +162,7 @@ function UsersTableBase({ users }: Props) {
           exportable={false}
           style={{ minWidth: "9rem" }}
         />
-      </DataTable>
+      </Table>
       <UserDetailsDialog user={viewedUser} onHide={handleCloseView} />
     </>
   );
