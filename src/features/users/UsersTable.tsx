@@ -7,7 +7,6 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { useDebounce } from "@/hooks/useDebounce";
 import type { UserRow } from "./types";
-import { Tooltip } from "primereact/tooltip";
 import { UserRowActions } from "./UserRowActions";
 import { UserDetailsDialog } from "./UserDetailsDialog";
 import "./users.css";
@@ -100,7 +99,6 @@ function UsersTableBase({ users, loading }: Props) {
 
   return (
     <>
-      <Tooltip target=".action-disabled" content="Do not modify the API data." position="top" />
       <DataTable
         value={users}
         dataKey="id"
