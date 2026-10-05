@@ -1,6 +1,6 @@
 import { memo, useMemo, useState, type ReactNode } from "react";
 import { FilterMatchMode } from "primereact/api";
-import { DataTable, type DataTableFilterMeta } from "primereact/datatable";
+import { DataTable, type DataTableFilterMeta, type DataTableValueArray } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -22,9 +22,8 @@ interface Props {
   header?: ReactNode;
   emptyMessage?: ReactNode;
 
-  selection?: unknown[];
-  onSelectionChange?: (value: unknown[]) => void;
-
+  selection?: DataTableValueArray;
+  onSelectionChange?: (value: DataTableValueArray) => void;
   pageSizes?: number[];
   rows?: number;
 
