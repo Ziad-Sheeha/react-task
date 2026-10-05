@@ -1,6 +1,6 @@
 import { memo, useMemo, useState, type ReactNode } from "react";
 import { FilterMatchMode } from "primereact/api";
-import { DataTable, type DataTableFilterMeta, type DataTableValueArray } from "primereact/datatable";
+import { DataTable, type DataTableFilterMeta, type DataTableValue } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -9,7 +9,7 @@ import { StateMessage } from "@/components/feedback/StateMessage";
 const DEFAULT_PAGE_SIZES = [5, 10, 25, 50, 100];
 
 interface Props {
-  value: unknown[];
+  value: DataTableValue[];
   dataKey?: string;
   children: ReactNode;
 
@@ -22,14 +22,13 @@ interface Props {
   header?: ReactNode;
   emptyMessage?: ReactNode;
 
-  selection?: DataTableValueArray;
-  onSelectionChange?: (value: DataTableValueArray) => void;
+  selection?: DataTableValue[];
+  onSelectionChange?: (value: DataTableValue[]) => void;
   pageSizes?: number[];
   rows?: number;
 
   scrollable?: boolean;
 }
-
 function TableBase({
   value,
   dataKey,
