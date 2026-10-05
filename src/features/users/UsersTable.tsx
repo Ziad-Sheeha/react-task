@@ -39,7 +39,7 @@ function UsersTableBase({ users }: Props) {
 
   const [viewId, setViewId] = useState<number | null>(null);
 
-  const viewedUser = useMemo(() => users.find((u) => u.id === viewId) ?? null, [users, viewId]);
+  const viewedUser = users.find((u) => u.id === viewId) ?? null;
 
   const handleView = useCallback((id: number) => setViewId(id), []);
   const handleCloseView = useCallback(() => setViewId(null), []);
@@ -69,14 +69,7 @@ function UsersTableBase({ users }: Props) {
     setFilters(createFilters());
   }, []);
 
-  const header = (
-    <div className="flex justify-content-between align-items-center gap-3 flex-wrap">
-      <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined onClick={clearAll} />
-      <span className="search-box">
-        <i className="pi pi-search" />
-      </span>
-    </div>
-  );
+  const header = <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined onClick={clearAll} />;
 
   const hasActiveFilters = useMemo(() => {
     return Object.entries(filters).some(([field, filter]) => {
@@ -93,7 +86,7 @@ function UsersTableBase({ users }: Props) {
   const emptyMessage = (
     <StateMessage
       icon={hasActiveFilters ? "pi pi-search" : "pi pi-users"}
-      title={hasActiveFilters ? "No users found" : "No users yet"}
+      title={hasActiveFilters ? "No users found" : "No users found"}
       description={
         hasActiveFilters
           ? "We couldn't find any users matching your search or filters."
